@@ -1,0 +1,12 @@
+Django>=6,<6.1
+wagtail==7.3rc1
+gunicorn
+whitenoise[broccoli]
+django-storages[s3]
+boto3
+python-dotenv
+dj-database-url
+psycopg2-binary
+django-filter
+django-modelcluster
+django-taggit

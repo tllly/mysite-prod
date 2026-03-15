@@ -1,0 +1,15 @@
+{% extends "base.html" %}
+{% load wagtailcore_tags %}
+
+{% block content %}
+    <h1>Products tagged: {{ request.GET.tag }}</h1>
+
+    {% for product in productpages %}
+        <h2><a href="{% pageurl product %}">{{ product.title }}</a></h2>
+        <p>{{ product.specific.intro }}</p>
+    {% empty %}
+        No products found with that tag.
+    {% endfor %}
+
+    <p><a href="{{ page.get_parent.url }}">Return to products list</a></p>
+{% endblock %}

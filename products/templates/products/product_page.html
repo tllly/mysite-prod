@@ -1,0 +1,101 @@
+{% extends "base.html" %}
+
+{% load wagtailcore_tags wagtailimages_tags navigation_tags %}
+
+{% block body_class %}template-productpage{% endblock %}
+
+{% block content %}
+    <h1>{{ page.title }}</h1>
+    
+    <div class="product-header" style="display: flex; gap: 40px; margin-bottom: 40px;">
+        <div class="product-image" style="flex: 1;">
+            {% with page.main_image as main_image %}
+                {% if main_image %}{% image main_image fill-600x400 %}{% endif %}
+            {% endwith %}
+        </div>
+        <div class="product-actions" style="flex: 1; background: #f9f9f9; padding: 20px; border-radius: 8px;">
+            {% if page.price %}
+                <p class="price" style="font-size: 2em; color: #e44d26;"><strong>${{ page.price }}</strong></p>
+            {% endif %}
+            <p>{{ page.intro }}</p>
+
+            <div style="margin-top: 30px; display: flex; flex-direction: column; gap: 15px;">
+                <!-- WhatsApp Conversion -->
+                {% if settings.base.NavigationSettings.whatsapp %}
+                <a href="https://wa.me/{{ settings.base.NavigationSettings.whatsapp }}?text=I'm interested in {{ page.title }}" 
+                   target="_blank" 
+                   style="display: block; text-align: center; padding: 15px; background: #25D366; color: #fff; text-decoration: none; border-radius: 5px; font-weight: bold;">
+                   Contact via WhatsApp
+                </a>
+                {% endif %}
+
+                <!-- Inquiry Form -->
+                {% get_inquiry_url as inquiry_url %}
+                <a href="{{ inquiry_url }}?product={{ page.title }}" 
+                   style="display: block; text-align: center; padding: 15px; background: #007bff; color: #fff; text-decoration: none; border-radius: 5px; font-weight: bold;">
+                   Send Inquiry
+                </a>
+            </div>
+        </div>
+    </div>
+
+    <div class="product-details" style="margin-top: 40px;">
+        <h3>Product Description</h3>
+        <div class="body">
+            {{ page.body|richtext }}
+        </div>
+
+        {% if page.specifications %}
+            <h3 style="margin-top: 40px;">Technical Specifications</h3>
+            <div class="specifications" style="background: #fff; border: 1px solid #eee; padding: 20px;">
+                {{ page.specifications|richtext }}
+            </div>
+        {% endif %}
+    </div>
+
+    <!-- Trust Symbols -->
+    {% get_certificates %}
+
+    <div class="gallery" style="overflow: hidden; margin: 40px 0;">
+        {% for item in page.gallery_images.all %}
+            <div style="float: left; margin: 10px; text-align: center;">
+                {% image item.image fill-480x320 %}
+                <p>{{ item.caption }}</p>
+            </div>
+        {% endfor %}
+    </div>
+
+    <p><a href="{{ page.get_parent.url }}">Back to products</a></p>
+
+    {% if related_products %}
+        <div class="related-products" style="margin-top: 50px; border-top: 2px solid #eee; padding-top: 20px;">
+            <h3>Related Products</h3>
+            <div style="display: flex; gap: 20px;">
+                {% for related in related_products %}
+                    <div style="flex: 1; border: 1px solid #eee; padding: 10px;">
+                        <a href="{% pageurl related %}">
+                            {% with related.main_image as img %}
+                                {% if img %}{% image img fill-150x100 %}{% endif %}
+                            {% endwith %}
+                            <h4>{{ related.title }}</h4>
+                        </a>
+                        <p>{{ related.intro }}</p>
+                    </div>
+                {% endfor %}
+            </div>
+        </div>
+    {% endif %}
+
+    <!-- tags -->
+    {% with tags=page.tags.all %}
+        {% if tags %}
+            <div class="tags" style="margin-top: 30px;">
+                <h3>Tags</h3>
+                {% for tag in tags %}
+                    <a href="{% slugurl 'product-tags' %}?tag={{ tag }}"><button type="button">{{ tag }}</button></a>
+                {% endfor %}
+            </div>
+        {% endif %}
+    {% endwith %}
+
+{% endblock %}

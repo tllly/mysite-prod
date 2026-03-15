@@ -1,0 +1,14 @@
+{% load wagtailimages_tags %}
+{% if certificates %}
+<div class="certificates-section" style="margin: 40px 0; text-align: center; border-top: 1px solid #eee; padding-top: 30px;">
+    <h3>Our Certificates & Qualifications</h3>
+    <div style="display: flex; justify-content: center; gap: 30px; flex-wrap: wrap;">
+        {% for cert in certificates %}
+            <div style="width: 120px;">
+                {% image cert.image width-120 %}
+                <p style="font-size: 0.8em; margin-top: 5px;">{{ cert.name }}</p>
+            </div>
+        {% endfor %}
+    </div>
+</div>
+{% endif %}
