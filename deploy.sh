@@ -3,13 +3,13 @@
 # --- 自动化部署脚本 ---
 
 # 1. 进入项目目录 (根据你的实际路径修改)
-# cd /home/tangli/my-project/mysite
+cd /var/www/mysite-prod
 
 # 2. 激活虚拟环境
 source venv/bin/activate
 
 # 3. 拉取最新代码 (前提是你已经配置了 Git)
-# git pull origin main
+sudo -u www-data git pull origin main
 
 # 4. 安装/更新依赖
 pip install -r requirements.txt
