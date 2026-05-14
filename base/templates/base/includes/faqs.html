@@ -1,0 +1,19 @@
+{% load wagtailcore_tags %}
+
+{% if faqs %}
+<div class="faqs" style="margin: 50px 0;">
+    <h2 style="margin-bottom: 25px;">Frequently Asked Questions</h2>
+    <div style="display: flex; flex-direction: column; gap: 15px;">
+        {% for faq in faqs %}
+        <details style="background: #fff; border: 1px solid #ddd; border-radius: 6px; padding: 15px; cursor: pointer;">
+            <summary style="font-weight: bold; color: #333; outline: none;">
+                {{ faq.question }}
+            </summary>
+            <div style="margin-top: 15px; border-top: 1px solid #eee; padding-top: 15px; color: #555;">
+                {{ faq.answer|richtext }}
+            </div>
+        </details>
+        {% endfor %}
+    </div>
+</div>
+{% endif %}

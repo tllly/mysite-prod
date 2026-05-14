@@ -10,3 +10,5 @@ psycopg2-binary
 django-filter
 django-modelcluster
 django-taggit
+wagtail-localize
+wagtailmedia

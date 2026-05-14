@@ -5,7 +5,8 @@ from modelcluster.fields import ParentalKey, ParentalManyToManyField
 from modelcluster.contrib.taggit import ClusterTaggableManager
 from taggit.models import TaggedItemBase
 
-from wagtail.models import Page, Orderable
+import uuid
+from wagtail.models import Page, Orderable, TranslatableMixin, Locale
 from wagtail.fields import RichTextField
 from wagtail.admin.panels import MultiFieldPanel, FieldPanel, InlinePanel
 from wagtail.snippets.models import register_snippet
@@ -31,7 +32,9 @@ class ProductPageTag(TaggedItemBase):
         on_delete=models.CASCADE
     )
 
-class ProductCategory(models.Model):
+class ProductCategory(TranslatableMixin, models.Model):
+    translation_key = models.UUIDField(default=uuid.uuid4, editable=False, null=True)
+    locale = models.ForeignKey(Locale, on_delete=models.PROTECT, related_name='+', null=True)
     name = models.CharField(max_length=255)
     icon = models.ForeignKey(
         'wagtailimages.Image', null=True, blank=True,
@@ -46,14 +49,27 @@ class ProductCategory(models.Model):
     def __str__(self):
         return self.name
 
-    class Meta:
+    class Meta(TranslatableMixin.Meta):
         verbose_name_plural = 'Product Categories'
 
 class ProductPage(Page):
+    sku = models.CharField(max_length=50, blank=True, verbose_name="SKU / Item No.")
     price = models.DecimalField(max_digits=10, decimal_places=2, null=True, blank=True, verbose_name="Price")
+    moq = models.CharField(max_length=100, blank=True, verbose_name="MOQ (Minimum Order Quantity)")
+    lead_time = models.CharField(max_length=100, blank=True, verbose_name="Lead Time")
     intro = models.CharField(max_length=250)
     body = RichTextField(blank=True)
     specifications = RichTextField(blank=True, verbose_name="Specifications")
+    packaging_details = RichTextField(blank=True, verbose_name="Packaging Details")
+    video_file = models.ForeignKey(
+        'wagtailmedia.Media',
+        null=True,
+        blank=True,
+        on_delete=models.SET_NULL,
+        related_name='+',
+        verbose_name="Local Video File"
+    )
+    video_url = models.URLField(blank=True, verbose_name="External Video URL (YouTube/Vimeo)")
     is_featured = models.BooleanField(default=False, verbose_name="Is Featured")
 
     categories = ParentalManyToManyField('products.ProductCategory', blank=True)
@@ -76,7 +92,10 @@ class ProductPage(Page):
 
     content_panels = Page.content_panels + [
         MultiFieldPanel([
+            FieldPanel("sku"),
             FieldPanel("price"),
+            FieldPanel("moq"),
+            FieldPanel("lead_time"),
             FieldPanel("is_featured"),
             FieldPanel("categories", widget=forms.CheckboxSelectMultiple),
             FieldPanel("tags"),
@@ -84,6 +103,9 @@ class ProductPage(Page):
         FieldPanel("intro"),
         FieldPanel("body"),
         FieldPanel("specifications"),
+        FieldPanel("packaging_details"),
+        FieldPanel("video_file"),
+        FieldPanel("video_url"),
         InlinePanel("gallery_images", label="Gallery images"),
     ]
 

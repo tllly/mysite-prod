@@ -1,0 +1,23 @@
+{% load wagtailimages_tags %}
+
+{% if testimonials %}
+<div class="testimonials" style="margin: 50px 0; padding: 40px; background: #f0f4f8; border-radius: 12px;">
+    <h2 style="text-align: center; margin-bottom: 30px;">What Our Clients Say</h2>
+    <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); gap: 30px;">
+        {% for item in testimonials %}
+        <div class="testimonial-item" style="background: #fff; padding: 25px; border-radius: 8px; box-shadow: 0 4px 6px rgba(0,0,0,0.05);">
+            <p style="font-style: italic; color: #444; margin-bottom: 20px;">"{{ item.quote }}"</p>
+            <div style="display: flex; align-items: center; gap: 15px;">
+                {% if item.image %}
+                    {% image item.image fill-50x50 style="border-radius: 50%;" %}
+                {% endif %}
+                <div>
+                    <h4 style="margin: 0; color: #333;">{{ item.name }}</h4>
+                    <p style="margin: 0; font-size: 0.85em; color: #777;">{{ item.role }}</p>
+                </div>
+            </div>
+        </div>
+        {% endfor %}
+    </div>
+</div>
+{% endif %}

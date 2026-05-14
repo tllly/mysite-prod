@@ -1,27 +1,59 @@
 {% extends "base.html" %}
 
-{% load wagtailcore_tags wagtailimages_tags %}
+{% load static wagtailcore_tags wagtailimages_tags navigation_tags %}
 
 {% block body_class %}template-productindexpage{% endblock %}
 
+{% block extra_css %}
+<link rel="stylesheet" type="text/css" href="{% static 'css/mysite.css' %}">
+{% endblock %}
+
 {% block content %}
-    <h1>{{ page.title }}</h1>
+<div class="container">
+    <h1 style="text-align: center; margin-bottom: 20px; font-size: 3em;">{{ page.title }}</h1>
 
-    <div class="intro">{{ page.intro|richtext }}</div>
+    {% if page.intro %}
+        <div class="intro" style="text-align: center; max-width: 800px; margin: 0 auto 40px auto; font-size: 1.2em; color: #555;">
+            {{ page.intro|richtext }}
+        </div>
+    {% endif %}
 
-    {% for product in productpages %}
-        {% with product=product.specific %}
-            <div class="product-item" style="border-bottom: 1px solid #ccc; padding: 20px 0;">
-                <h2><a href="{% pageurl product %}">{{ product.title }}</a></h2>
-                {% if product.price %}
-                    <p><strong>Price:</strong> ${{ product.price }}</p>
-                {% endif %}
-                {% with product.main_image as main_image %}
-                    {% if main_image %}{% image main_image fill-320x240 %}{% endif %}
-                {% endwith %}
-                <p>{{ product.intro }}</p>
-            </div>
-        {% endwith %}
-    {% endfor %}
-
+    <div class="product-grid">
+        {% for product in productpages %}
+            {% with product=product.specific %}
+                <div class="product-card">
+                    <a href="{% pageurl product %}" style="text-decoration: none; color: inherit; display: block;">
+                        {% with product.main_image as main_image %}
+                            {% if main_image %}
+                                {% image main_image fill-400x300 class="product-card-img" %}
+                            {% else %}
+                                <div class="product-card-img" style="background: #eee; display: flex; align-items: center; justify-content: center; color: #999;">No Image</div>
+                            {% endif %}
+                        {% endwith %}
+                    </a>
+                    
+                    <div class="product-card-body">
+                        <a href="{% pageurl product %}" style="text-decoration: none;">
+                            <h2 class="product-card-title">{{ product.title }}</h2>
+                        </a>
+                        
+                        <div class="product-card-meta">
+                            {% if product.sku %}
+                                <p><strong>SKU:</strong> {{ product.sku }}</p>
+                            {% endif %}
+                            {% if product.moq %}
+                                <p><strong>MOQ:</strong> {{ product.moq }}</p>
+                            {% endif %}
+                            <p style="margin-top: 10px; color: #777;">{{ product.intro|truncatechars:80 }}</p>
+                        </div>
+                        
+                        <a href="{% pageurl product %}" class="product-card-btn">View Details</a>
+                    </div>
+                </div>
+            {% endwith %}
+        {% empty %}
+            <p style="text-align: center; width: 100%; grid-column: 1 / -1; padding: 50px; background: #f9f9f9; border-radius: 8px;">No products found.</p>
+        {% endfor %}
+    </div>
+</div>
 {% endblock %}

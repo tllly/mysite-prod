@@ -1,0 +1,21 @@
+{% load base_filters %}
+{% if locales|length > 1 %}
+<div class="language-switcher" style="padding: 10px 0; border-bottom: 1px solid #eee; margin-bottom: 20px;">
+    <div class="container" style="display: flex; justify-content: flex-end; align-items: center; gap: 15px;">
+        <span style="font-size: 0.9em; color: #666;">Language:</span>
+        <ul style="list-style: none; margin: 0; padding: 0; display: flex; gap: 10px;">
+            {% for locale in locales %}
+                <li style="display: inline;">
+                    {% if locale.language_code == current_language_code %}
+                        <span style="font-weight: bold; color: var(--primary-color); border-bottom: 2px solid var(--primary-color);">{{ locale.get_display_name }}</span>
+                    {% else %}
+                        {% if translations|get_item:locale.id %}
+                            <a href="{{ translations|get_item:locale.id }}" style="text-decoration: none; color: #555; font-size: 0.9em; transition: color 0.2s;" onmouseover="this.style.color='var(--primary-color)'" onmouseout="this.style.color='#555'">{{ locale.get_display_name }}</a>
+                        {% endif %}
+                    {% endif %}
+                </li>
+            {% endfor %}
+        </ul>
+    </div>
+</div>
+{% endif %}

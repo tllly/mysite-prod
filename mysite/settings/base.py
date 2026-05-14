@@ -52,12 +52,16 @@ INSTALLED_APPS = [
     "storages",
     "wagtail.contrib.settings",
     "wagtail.contrib.sitemaps",
+    "wagtail_localize",
+    "wagtail_localize.locales",
+    "wagtailmedia",
 ]
 
 MIDDLEWARE = [
     "django.middleware.security.SecurityMiddleware",
     "whitenoise.middleware.WhiteNoiseMiddleware",  # MUST be after SecurityMiddleware
     "django.contrib.sessions.middleware.SessionMiddleware",
+    "django.middleware.locale.LocaleMiddleware",
     "django.middleware.common.CommonMiddleware",
     "django.middleware.csrf.CsrfViewMiddleware",
     "django.contrib.auth.middleware.AuthenticationMiddleware",
@@ -130,6 +134,21 @@ TIME_ZONE = "UTC"
 USE_I18N = True
 
 USE_TZ = True
+
+WAGTAIL_I18N_ENABLED = True
+
+LANGUAGES = [
+    ("en", "English"),
+    ("de", "German"),
+    ("fr", "French"),
+    ("it", "Italian"),
+    ("es", "Spanish"),
+    ("ru", "Russian"),
+    ("ar", "Arabic"),
+    ("zh-hans", "Chinese"),
+]
+
+WAGTAIL_CONTENT_LANGUAGES = LANGUAGES
 
 
 # Static files (CSS, JavaScript, Images)

@@ -1,4 +1,4 @@
-{% load static wagtailcore_tags wagtailuserbar %}
+{% load static wagtailcore_tags wagtailuserbar navigation_tags %}
 
 <!DOCTYPE html>
 <html lang="en">
@@ -29,12 +29,61 @@
         {% block extra_css %}
         {# Override this in templates to add extra stylesheets #}
         {% endblock %}
+
+        {% if settings.base.TrackingSettings.ga_tracking_id %}
+        <!-- Global site tag (gtag.js) - Google Analytics -->
+        <script async src="https://www.googletagmanager.com/gtag/js?id={{ settings.base.TrackingSettings.ga_tracking_id }}"></script>
+        <script>
+          window.dataLayer = window.dataLayer || [];
+          function gtag(){dataLayer.push(arguments);}
+          gtag('js', new Date());
+          gtag('config', '{{ settings.base.TrackingSettings.ga_tracking_id }}');
+        </script>
+        {% endif %}
+
+        {% if settings.base.TrackingSettings.gtm_container_id %}
+        <!-- Google Tag Manager -->
+        <script>(function(w,d,s,l,i){w[l]=w[l]||[];w[l].push({'gtm.start':
+        new Date().getTime(),event:'gtm.js'});var f=d.getElementsByTagName(s)[0],
+        j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=
+        'https://www.googletagmanager.com/gtm.js?id='+i+dl;f.parentNode.insertBefore(j,f);
+        })(window,document,'script','dataLayer','{{ settings.base.TrackingSettings.gtm_container_id }}');</script>
+        <!-- End Google Tag Manager -->
+        {% endif %}
+
+        {% if settings.base.TrackingSettings.custom_head_scripts %}
+            {{ settings.base.TrackingSettings.custom_head_scripts|safe }}
+        {% endif %}
     </head>
 
     <body class="{% block body_class %}{% endblock %}">
+        {% language_switcher %}
+
+        {% if settings.base.TrackingSettings.gtm_container_id %}
+        <!-- Google Tag Manager (noscript) -->
+        <noscript><iframe src="https://www.googletagmanager.com/ns.html?id={{ settings.base.TrackingSettings.gtm_container_id }}"
+        height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
+        <!-- End Google Tag Manager (noscript) -->
+        {% endif %}
+
+        {% if settings.base.TrackingSettings.custom_body_scripts %}
+            {{ settings.base.TrackingSettings.custom_body_scripts|safe }}
+        {% endif %}
+
         {% wagtailuserbar %}
 
         {% block content %}{% endblock %}
+
+        {% if settings.base.NavigationSettings.whatsapp %}
+        <a href="https://wa.me/{{ settings.base.NavigationSettings.whatsapp }}" 
+           target="_blank" 
+           style="position: fixed; bottom: 30px; right: 30px; background: #25D366; color: white; width: 60px; height: 60px; border-radius: 50%; display: flex; align-items: center; justify-content: center; text-decoration: none; box-shadow: 2px 2px 10px rgba(0,0,0,0.2); z-index: 9999;"
+           title="Chat with us on WhatsApp">
+           <svg viewBox="0 0 32 32" style="width: 32px; height: 32px; fill: white;">
+               <path d="M16 0c-8.837 0-16 7.163-16 16 0 2.825 0.733 5.476 2.016 7.788l-2.016 7.359 7.543-1.981c2.257 1.201 4.838 1.889 7.581 1.889 8.837 0 16-7.163 16-16s-7.163-16-16-16zM16 29.333c-2.481 0-4.811-0.657-6.829-1.801l-0.489-0.279-4.512 1.185 1.21-4.417-0.304-0.485c-1.259-2.008-1.983-4.385-1.983-6.936 0-7.351 5.981-13.333 13.333-13.333s13.333 5.981 13.333 13.333-5.981 13.333-13.333 13.333zM22.536 18.525c-0.359-0.18-2.122-1.047-2.451-1.167s-0.569-0.18-0.808 0.18-0.927 1.167-1.137 1.407-0.419 0.269-0.778 0.090c-0.359-0.18-1.516-0.559-2.887-1.782-1.066-0.951-1.786-2.126-1.996-2.485s-0.022-0.553 0.158-0.732c0.161-0.161 0.359-0.419 0.539-0.628s0.239-0.359 0.359-0.598c0.12-0.239 0.060-0.449-0.030-0.628s-0.808-1.946-1.107-2.665c-0.291-0.7-0.591-0.605-0.808-0.617s-0.449-0.015-0.688-0.015-0.628 0.090-0.957 0.449c-0.329 0.359-1.257 1.227-1.257 2.994s1.287 3.473 1.467 3.712c0.18 0.239 2.533 3.868 6.136 5.424 0.857 0.37 1.526 0.591 2.048 0.757 0.86 0.273 1.643 0.235 2.261 0.143 0.69-0.103 2.122-0.868 2.421-1.706s0.299-1.556 0.21-1.706c-0.090-0.15-0.329-0.239-0.688-0.419z"></path>
+           </svg>
+        </a>
+        {% endif %}
 
         {% include "includes/footer.html" %}
 

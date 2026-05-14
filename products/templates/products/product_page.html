@@ -1,30 +1,54 @@
 {% extends "base.html" %}
 
-{% load wagtailcore_tags wagtailimages_tags navigation_tags %}
+{% load static wagtailcore_tags wagtailimages_tags navigation_tags %}
 
 {% block body_class %}template-productpage{% endblock %}
 
+{% block extra_css %}
+<link rel="stylesheet" type="text/css" href="{% static 'css/mysite.css' %}">
+{% endblock %}
+
 {% block content %}
+<div class="container">
     <h1>{{ page.title }}</h1>
     
-    <div class="product-header" style="display: flex; gap: 40px; margin-bottom: 40px;">
-        <div class="product-image" style="flex: 1;">
+    <div class="product-header">
+        <div class="product-image">
             {% with page.main_image as main_image %}
-                {% if main_image %}{% image main_image fill-600x400 %}{% endif %}
+                {% if main_image %}
+                    {% image main_image original class="img-fluid" %}
+                {% endif %}
             {% endwith %}
         </div>
-        <div class="product-actions" style="flex: 1; background: #f9f9f9; padding: 20px; border-radius: 8px;">
-            {% if page.price %}
-                <p class="price" style="font-size: 2em; color: #e44d26;"><strong>${{ page.price }}</strong></p>
+        
+        <div class="product-actions">
+            {% if page.sku %}
+                <p class="sku" style="color: #666; font-size: 0.9em; margin-bottom: 5px;">Item No: {{ page.sku }}</p>
             {% endif %}
-            <p>{{ page.intro }}</p>
+            
+            {% if page.price %}
+                <p class="price"><strong>${{ page.price }}</strong></p>
+            {% endif %}
+            
+            <div class="b2b-specs">
+                {% if page.moq %}
+                    <p><strong>MOQ:</strong> {{ page.moq }}</p>
+                {% endif %}
+                {% if page.lead_time %}
+                    <p><strong>Lead Time:</strong> {{ page.lead_time }}</p>
+                {% endif %}
+            </div>
 
-            <div style="margin-top: 30px; display: flex; flex-direction: column; gap: 15px;">
+            <div class="intro">
+                {{ page.intro }}
+            </div>
+
+            <div class="cta-buttons" style="margin-top: 30px; display: flex; flex-direction: column; gap: 15px;">
                 <!-- WhatsApp Conversion -->
                 {% if settings.base.NavigationSettings.whatsapp %}
                 <a href="https://wa.me/{{ settings.base.NavigationSettings.whatsapp }}?text=I'm interested in {{ page.title }}" 
                    target="_blank" 
-                   style="display: block; text-align: center; padding: 15px; background: #25D366; color: #fff; text-decoration: none; border-radius: 5px; font-weight: bold;">
+                   class="btn-cta btn-whatsapp">
                    Contact via WhatsApp
                 </a>
                 {% endif %}
@@ -32,23 +56,56 @@
                 <!-- Inquiry Form -->
                 {% get_inquiry_url as inquiry_url %}
                 <a href="{{ inquiry_url }}?product={{ page.title }}" 
-                   style="display: block; text-align: center; padding: 15px; background: #007bff; color: #fff; text-decoration: none; border-radius: 5px; font-weight: bold;">
+                   class="btn-cta btn-inquiry">
                    Send Inquiry
                 </a>
             </div>
         </div>
     </div>
 
-    <div class="product-details" style="margin-top: 40px;">
-        <h3>Product Description</h3>
-        <div class="body">
-            {{ page.body|richtext }}
+    <div class="product-details">
+        <div class="detail-section">
+            <h3>Product Description</h3>
+            <div class="body-content">
+                {{ page.body|richtext }}
+            </div>
         </div>
 
         {% if page.specifications %}
-            <h3 style="margin-top: 40px;">Technical Specifications</h3>
-            <div class="specifications" style="background: #fff; border: 1px solid #eee; padding: 20px;">
-                {{ page.specifications|richtext }}
+            <div class="detail-section">
+                <h3>Technical Specifications</h3>
+                <div class="specifications">
+                    {{ page.specifications|richtext }}
+                </div>
+            </div>
+        {% endif %}
+
+        {% if page.packaging_details %}
+            <div class="detail-section">
+                <h3>Packaging & Shipping</h3>
+                <div class="packaging">
+                    {{ page.packaging_details|richtext }}
+                </div>
+            </div>
+        {% endif %}
+
+        {% if page.video_file or page.video_url %}
+            <div class="detail-section">
+                <h3>Product Video</h3>
+                <div class="video-container" style="margin-top: 20px;">
+                    {% if page.video_file %}
+                        <video width="100%" height="auto" controls style="border-radius: 8px;">
+                            <source src="{{ page.video_file.url }}" type="video/mp4">
+                            Your browser does not support the video tag.
+                        </video>
+                    {% elif page.video_url %}
+                        <div class="external-video">
+                             <a href="{{ page.video_url }}" target="_blank" class="btn-cta btn-inquiry" style="display: inline-block; width: auto; padding: 12px 30px;">
+                                Watch Video on Platform
+                            </a>
+                        </div>
+                    {% endif %}
+                </div>
             </div>
         {% endif %}
     </div>
@@ -56,30 +113,43 @@
     <!-- Trust Symbols -->
     {% get_certificates %}
 
-    <div class="gallery" style="overflow: hidden; margin: 40px 0;">
-        {% for item in page.gallery_images.all %}
-            <div style="float: left; margin: 10px; text-align: center;">
-                {% image item.image fill-480x320 %}
-                <p>{{ item.caption }}</p>
-            </div>
-        {% endfor %}
+    {% get_testimonials %}
+
+    {% get_faqs %}
+
+    {% if page.gallery_images.exists %}
+    <div class="detail-section">
+        <h3>Product Gallery</h3>
+        <div class="gallery" style="display: grid; grid-template-columns: repeat(auto-fill, minmax(250px, 1fr)); gap: 20px; margin: 30px 0;">
+            {% for item in page.gallery_images.all %}
+                <div class="gallery-item" style="text-align: center;">
+                    {% image item.image fill-400x300 style="border-radius: 8px; width: 100%; height: auto;" %}
+                    <p style="margin-top: 10px; color: #666;">{{ item.caption }}</p>
+                </div>
+            {% endfor %}
+        </div>
+    </div>
+    {% endif %}
+
+    <div style="margin: 50px 0;">
+        <a href="{{ page.get_parent.url }}" style="color: var(--primary-color); text-decoration: none;">&larr; Back to {{ page.get_parent.title }}</a>
     </div>
 
-    <p><a href="{{ page.get_parent.url }}">Back to products</a></p>
-
     {% if related_products %}
-        <div class="related-products" style="margin-top: 50px; border-top: 2px solid #eee; padding-top: 20px;">
-            <h3>Related Products</h3>
-            <div style="display: flex; gap: 20px;">
+        <div class="related-products" style="margin-top: 60px; border-top: 1px solid #ddd; padding-top: 40px;">
+            <h3 style="margin-bottom: 30px;">Related Products</h3>
+            <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 30px;">
                 {% for related in related_products %}
-                    <div style="flex: 1; border: 1px solid #eee; padding: 10px;">
-                        <a href="{% pageurl related %}">
+                    <div class="related-item" style="border: 1px solid #eee; border-radius: 8px; overflow: hidden; background: #fff;">
+                        <a href="{% pageurl related %}" style="text-decoration: none; color: inherit;">
                             {% with related.main_image as img %}
-                                {% if img %}{% image img fill-150x100 %}{% endif %}
+                                {% if img %}{% image img fill-250x180 style="width: 100%; height: auto;" %}{% endif %}
                             {% endwith %}
-                            <h4>{{ related.title }}</h4>
+                            <div style="padding: 15px;">
+                                <h4 style="margin: 0 0 10px 0; color: var(--primary-color);">{{ related.title }}</h4>
+                                <p style="font-size: 0.9em; color: #777; margin: 0;">{{ related.intro|truncatechars:60 }}</p>
+                            </div>
                         </a>
-                        <p>{{ related.intro }}</p>
                     </div>
                 {% endfor %}
             </div>
@@ -89,13 +159,37 @@
     <!-- tags -->
     {% with tags=page.tags.all %}
         {% if tags %}
-            <div class="tags" style="margin-top: 30px;">
-                <h3>Tags</h3>
+            <div class="tags" style="margin-top: 50px; padding-top: 20px; border-top: 1px solid #eee;">
+                <span style="font-weight: bold; margin-right: 15px;">Tags:</span>
                 {% for tag in tags %}
-                    <a href="{% slugurl 'product-tags' %}?tag={{ tag }}"><button type="button">{{ tag }}</button></a>
+                    <a href="{% slugurl 'product-tags' %}?tag={{ tag }}" style="display: inline-block; padding: 5px 15px; background: #eee; border-radius: 20px; text-decoration: none; color: #555; font-size: 0.9em; margin-right: 10px;">{{ tag }}</a>
                 {% endfor %}
             </div>
         {% endif %}
     {% endwith %}
+</div>
+{% endblock %}
 
+{% block extra_js %}
+<script type="application/ld+json">
+{
+  "@context": "https://schema.org/",
+  "@type": "Product",
+  "name": "{{ page.title }}",
+  "image": [
+    {% with page.main_image as img %}{% if img %}"{{ request.scheme }}://{{ request.get_host }}{% image img original as img_orig %}{{ img_orig.url }}"{% endif %}{% endwith %}
+  ],
+  "description": "{{ page.intro }}",
+  "sku": "{{ page.sku }}",
+  {% if page.price %}
+  "offers": {
+    "@type": "Offer",
+    "url": "{{ request.scheme }}://{{ request.get_host }}{{ page.url }}",
+    "priceCurrency": "USD",
+    "price": "{{ page.price }}",
+    "availability": "https://schema.org/InStock"
+  }
+  {% endif %}
+}
+</script>
 {% endblock %}
