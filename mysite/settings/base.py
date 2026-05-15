@@ -184,6 +184,11 @@ STORAGES = {
 # can exceed this limit within Wagtail's page editor.
 DATA_UPLOAD_MAX_NUMBER_FIELDS = 10_000
 
+# Increase maximum upload sizes for large images and files
+# 50MB max upload size
+DATA_UPLOAD_MAX_MEMORY_SIZE = 50 * 1024 * 1024
+WAGTAILIMAGES_MAX_UPLOAD_SIZE = 50 * 1024 * 1024
+
 
 # Wagtail settings
 
