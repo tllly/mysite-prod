@@ -69,7 +69,11 @@
                 {% endfor %}
             </div>
             <div style="text-align: center; margin-top: 40px;">
-                <a href="/products/" class="btn-cta btn-inquiry" style="display: inline-block; width: auto; padding: 12px 30px;">View All Products</a>
+                {% if product_index_page %}
+                    <a href="{% pageurl product_index_page %}" class="btn-cta btn-inquiry" style="display: inline-block; width: auto; padding: 12px 30px;">View All Products</a>
+                {% else %}
+                    <a href="/products/" class="btn-cta btn-inquiry" style="display: inline-block; width: auto; padding: 12px 30px;">View All Products</a>
+                {% endif %}
             </div>
         </div>
         {% endif %}

@@ -96,10 +96,11 @@ class HomePage(Page):
 
     def get_context(self, request):
         context = super().get_context(request)
-        from products.models import ProductPage
+        from products.models import ProductPage, ProductIndexPage
         # Get up to 3 featured products, or the latest 3 if none are featured
         featured_products = ProductPage.objects.live().filter(is_featured=True).order_by('-first_published_at')[:3]
         if not featured_products.exists():
             featured_products = ProductPage.objects.live().order_by('-first_published_at')[:3]
         context['featured_products'] = featured_products
+        context['product_index_page'] = ProductIndexPage.objects.live().first()
         return context
