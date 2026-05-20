@@ -1,17 +1,18 @@
-/* Base styles for the Foreign Trade Site */
+/* Base styles for the Foreign Trade Site - MedSpa Premium Aesthetic */
 :root {
-    --primary-color: #007bff;
-    --secondary-color: #25D366;
-    --accent-color: #e44d26;
-    --text-color: #333;
-    --light-bg: #f9f9f9;
-    --border-color: #eee;
+    --primary-color: #2c2c2c; /* Deep elegant black/charcoal for main brand elements */
+    --secondary-color: #d4af37; /* Soft gold for accents and secondary buttons */
+    --accent-color: #c98a86; /* Soft dusty pink for highlights/prices */
+    --text-color: #333333; /* Dark grey for readable text */
+    --light-bg: #fff5f5; /* Very subtle warm pink/nude background */
+    --border-color: #eae1e1; /* Soft warm border */
 }
 
 body {
-    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    font-family: 'Helvetica Neue', Helvetica, Arial, sans-serif; /* Cleaner, more modern font stack */
     color: var(--text-color);
-    line-height: 1.6;
+    line-height: 1.7;
+    background-color: #ffffff;
 }
 
 .container {
