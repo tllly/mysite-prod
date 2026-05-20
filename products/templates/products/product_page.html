@@ -39,6 +39,21 @@
                 {% endif %}
             </div>
 
+            {% if page.product_variants.exists %}
+                <div class="product-variants" style="margin-top: 25px; border-top: 1px solid var(--border-color); padding-top: 20px;">
+                    <h4 style="font-size: 1.1em; margin-bottom: 15px; color: var(--primary-color);">Available Specifications:</h4>
+                    <ul style="list-style: none; padding: 0; margin: 0;">
+                        {% for variant in page.product_variants.all %}
+                            <li style="display: flex; justify-content: space-between; padding: 8px 0; border-bottom: 1px dashed #eee; font-size: 0.95em;">
+                                <span style="font-weight: 500;">{{ variant.name }}</span>
+                                <span style="color: #28a745; font-size: 0.85em; font-weight: bold;">{{ variant.stock_status }}</span>
+                            </li>
+                        {% endfor %}
+                    </ul>
+                    <p style="font-size: 0.8em; color: #888; margin-top: 10px; font-style: italic;">* Customized configurations available for OEM orders</p>
+                </div>
+            {% endif %}
+
             <div class="intro">
                 {{ page.intro }}
             </div>

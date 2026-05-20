@@ -104,9 +104,24 @@ class ProductPage(Page):
         FieldPanel("body"),
         FieldPanel("specifications"),
         FieldPanel("packaging_details"),
+        InlinePanel("product_variants", label="Available Specifications / Variants"),
         FieldPanel("video_file"),
         FieldPanel("video_url"),
         InlinePanel("gallery_images", label="Gallery images"),
+    ]
+
+class ProductVariant(Orderable):
+    page = ParentalKey(ProductPage, on_delete=models.CASCADE, related_name='product_variants')
+    name = models.CharField(max_length=255, help_text="e.g. 1 Round Liner (.25mm Long Taper)")
+    stock_status = models.CharField(
+        max_length=100, 
+        default="In Stock", 
+        help_text="e.g. In Stock, Lead time 2 weeks, etc."
+    )
+
+    panels = [
+        FieldPanel("name"),
+        FieldPanel("stock_status"),
     ]
 
 class ProductPageGalleryImage(Orderable):
